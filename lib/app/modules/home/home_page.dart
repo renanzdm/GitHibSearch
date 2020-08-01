@@ -64,14 +64,37 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                           controller.isLoading = true;
                         }
                       },
-                      child: ListView.builder(
-                        itemCount: controller?.listUsers?.length,
-                        itemBuilder: (context, index) {
-                          var model = controller?.listUsers[index];
-                          return ListTile(
-                            title: Text("$index${model?.login}"),
-                          );
-                        },
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: controller?.listUsers?.length,
+                              itemBuilder: (context, index) {
+                                var model = controller?.listUsers[index];
+                                return Card(
+                                  child: ListTile(
+                                    onTap: (){
+                                      Modular.to.pushNamed('/details/',arguments: model);
+                                    },
+                                    title: Text("${model?.login}"),
+                                    leading: CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(model?.avatarUrl),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            height: controller.isLoading ? 50 : 0,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(
+                                  Colors.deepPurpleAccent),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -82,24 +105,51 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
                       child: NotificationListener<ScrollNotification>(
                     // ignore: missing_return
                     onNotification: (ScrollNotification scrollInfo) {
-                      if (scrollInfo.metrics.pixels ==
-                          scrollInfo.metrics.maxScrollExtent) {}
+                      if (!controller.isLoading &&
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
+                        controller.nextResultsRepositories();
+                        controller.isLoading = true;
+                      }
                     },
-                    child: ListView.builder(
-                      itemCount: controller?.listRepositories?.length,
-                      itemBuilder: (context, index) {
-                        var model = controller.listRepositories[index];
-                        return ListTile(
-                          title: Text(model.name),
-                        );
-                      },
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: controller?.listRepositories?.length,
+                            itemBuilder: (context, index) {
+                              var model = controller.listRepositories[index];
+                              return Card(
+                                child: ListTile(
+                                   onTap: (){
+                                    },
+                                  title: Text(model.name),
+                                  leading: CircleAvatar(
+                                    child:
+                                        Text(model.stargazersCount.toString()),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          height: controller.isLoading ? 50 : 0,
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation(Colors.deepPurpleAccent),
+                          ),
+                        ),
+                      ],
                     ),
                   ));
                   break;
+                case OptionSelected.none:
+                  return Container();
+                  break;
+
                 default:
-                  return Container(
-                    child: FlutterLogo(),
-                  );
               }
             },
           ),

@@ -5,6 +5,7 @@ import 'package:github_perfil/app/modules/home/home_module.dart';
 import 'package:github_perfil/app/modules/splash/splash_module.dart';
 
 import 'app_controller.dart';
+import 'modules/details_user/details_user_module.dart';
 
 class AppModule extends MainModule {
   @override
@@ -16,6 +17,7 @@ class AppModule extends MainModule {
   List<Router> get routers => [
         Router(Modular.initialRoute, module: SplashModule()),
         Router('/home', module: HomeModule()),
+        Router('/details',module: DetailUserModule())
       ];
 
   @override
